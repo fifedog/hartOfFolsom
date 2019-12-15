@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Check_in_Day__c</fullName>
+        <description>Displays the day of week for the check in date</description>
+        <externalId>false</externalId>
+        <formula>CASE( MOD(  DateValue(Checkin_Date_Time__c) - DATE(1900, 1, 7), 7), 0, &quot;0_Sunday&quot;, 1, &quot;1_Monday&quot;, 2, &quot;2_Tuesday&quot;, 3,
+&quot;3_Wednesday&quot;, 4, &quot;4_Thursday&quot;, 5, &quot;5_Friday&quot;, 6, &quot;6_Saturday&quot;,&quot;Error&quot;)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Check in Day</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Checkin_Date_Time__c</fullName>
+        <defaultValue>now()</defaultValue>
+        <externalId>false</externalId>
+        <label>Checkin Date/Time</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Checkin_Time__c</fullName>
+        <externalId>false</externalId>
+        <formula>timevalue(Checkin_Date_Time__c)-28800000</formula>
+        <label>Checkin Time</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Time</type>
+    </fields>
+    <fields>
+        <fullName>Client__c</fullName>
+        <externalId>false</externalId>
+        <label>Client</label>
+        <lookupFilter>
+            <active>true</active>
+            <filterItems>
+                <field>Contact.RecordType.Name</field>
+                <operation>equals</operation>
+                <value>Client</value>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>Checkins</relationshipLabel>
+        <relationshipName>Checkins</relationshipName>
+        <relationshipOrder>0</relationshipOrder>
+        <reparentableMasterDetail>false</reparentableMasterDetail>
+        <trackTrending>false</trackTrending>
+        <type>MasterDetail</type>
+        <writeRequiresMasterRead>false</writeRequiresMasterRead>
+    </fields>
+    <fields>
+        <fullName>First_Day__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <inlineHelpText>Is this their first time this season with HART Winter shelter?</inlineHelpText>
+        <label>First Day</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Interviewed__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <inlineHelpText>Has the client been sent back for an interview.</inlineHelpText>
+        <label>Interviewed</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Most_Recent_Stay__c</fullName>
+        <description>Used to capture when was the last time the client visited us this season (previous 4 months) Set but the Checkin flow</description>
+        <externalId>false</externalId>
+        <label>Most Recent Stay</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <fields>
+        <fullName>Previous_Night__c</fullName>
+        <defaultValue>false</defaultValue>
+        <externalId>false</externalId>
+        <inlineHelpText>Was the client hear last night?</inlineHelpText>
+        <label>Previous Night</label>
+        <trackTrending>false</trackTrending>
+        <type>Checkbox</type>
+    </fields>
+    <fields>
+        <fullName>Priority_Number__c</fullName>
+        <externalId>false</externalId>
+        <formula>/* Based on the min of the hour this is the base number to determine the clients priority number. Lowest number is better. 
+Add 60 in order offset any of the bonus items
+Subtract 60 if the client came the previous night
+Subtract the minute difference of checkin time with 21 (those who check in before 5:21 have priority from those who don&apos;t)   */
+
+MINUTE(timevalue(Checkin_Date_Time__c))+ 60 + if( Previous_Night__c , -60,0) + 
+if(minute(timevalue(Checkin_Date_Time__c))&lt;21, minute(timevalue(Checkin_Date_Time__c))-21,0)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Priority Number</label>
+        <precision>18</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Returning_Status__c</fullName>
+        <description>Used in reporting for understanding who&apos;s new or returning.</description>
+        <externalId>false</externalId>
+        <formula>if(First_Day__c, &quot;First Night&quot;, 
+   if(Previous_Night__c,&quot;Previous&quot;,&quot;Returning&quot;  )
+)</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Returning Status</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>In- they have a bed. ; Turned away- they are not coming to the host site</inlineHelpText>
+        <label>Status</label>
+        <required>false</required>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <restricted>true</restricted>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>In</fullName>
+                    <default>false</default>
+                    <label>In</label>
+                </value>
+                <value>
+                    <fullName>Turned_away</fullName>
+                    <default>false</default>
+                    <label>Turned away</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Checkin_Date_Time__c</columns>
+        <columns>Status__c</columns>
+        <columns>Client__c</columns>
+        <columns>Previous_Night__c</columns>
+        <columns>Priority_Number__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>Today_s_Checkins</fullName>
+        <columns>Client__c</columns>
+        <columns>Status__c</columns>
+        <columns>Priority_Number__c</columns>
+        <columns>Checkin_Time__c</columns>
+        <columns>Interviewed__c</columns>
+        <columns>Most_Recent_Stay__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Checkin_Date_Time__c</field>
+            <operation>equals</operation>
+            <value>TODAY</value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operation>notEqual</operation>
+            <value>Turned_away</value>
+        </filters>
+        <label>Today&apos;s Checkins</label>
+    </listViews>
+</CustomObject>

@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Bag_Number__c</fullName>
+        <description>Used in order to properly sort the bags by a numeric value</description>
+        <externalId>false</externalId>
+        <label>Bag Number</label>
+        <precision>3</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>true</unique>
+    </fields>
+    <fields>
+        <fullName>Last_Used_Date__c</fullName>
+        <description>When was this bag last used. This comes from the Bag Checkout object</description>
+        <externalId>false</externalId>
+        <label>Last Used Date</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>DateTime</type>
+    </fields>
+    <fields>
+        <fullName>Last_used_by__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <inlineHelpText>The client who used the bag last</inlineHelpText>
+        <label>Last Used By</label>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>Last Used Bag</relationshipLabel>
+        <relationshipName>LastUsedBag</relationshipName>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Status__c</fullName>
+        <externalId>false</externalId>
+        <inlineHelpText>What is the current state of the bag</inlineHelpText>
+        <label>Status</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>Picklist</type>
+        <valueSet>
+            <valueSetDefinition>
+                <sorted>false</sorted>
+                <value>
+                    <fullName>Unassigned</fullName>
+                    <default>true</default>
+                    <label>Unassigned</label>
+                </value>
+                <value>
+                    <fullName>In Use</fullName>
+                    <default>false</default>
+                    <label>In Use</label>
+                </value>
+                <value>
+                    <fullName>Cleaning Required</fullName>
+                    <default>false</default>
+                    <label>Cleaning Required</label>
+                </value>
+                <value>
+                    <fullName>Damaged</fullName>
+                    <default>false</default>
+                    <label>Damaged</label>
+                </value>
+            </valueSetDefinition>
+        </valueSet>
+    </fields>
+    <fields>
+        <fullName>Swap_Comments__c</fullName>
+        <description>Used to capture comments when a bag is swapped. Comments will be cleared when the bag is unassigned.</description>
+        <externalId>false</externalId>
+        <label>Swap Comments</label>
+        <required>false</required>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>TextArea</type>
+    </fields>
+    <fields>
+        <fullName>Uses_Count__c</fullName>
+        <defaultValue>0</defaultValue>
+        <description>Used to capture how many times this bag was used since the last cleaning.</description>
+        <externalId>false</externalId>
+        <inlineHelpText>Used to capture how many times this bag was used since the last cleaning.</inlineHelpText>
+        <label>Use Count</label>
+        <precision>2</precision>
+        <required>false</required>
+        <scale>0</scale>
+        <trackFeedHistory>false</trackFeedHistory>
+        <trackTrending>false</trackTrending>
+        <type>Number</type>
+        <unique>false</unique>
+    </fields>
+    <listViews>
+        <fullName>All</fullName>
+        <columns>NAME</columns>
+        <columns>Status__c</columns>
+        <columns>Uses_Count__c</columns>
+        <columns>Last_used_by__c</columns>
+        <columns>Last_Used_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <label>All</label>
+    </listViews>
+    <listViews>
+        <fullName>Available</fullName>
+        <columns>NAME</columns>
+        <columns>Status__c</columns>
+        <columns>Last_used_by__c</columns>
+        <columns>Last_Used_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Unassigned</value>
+        </filters>
+        <label>Available</label>
+    </listViews>
+    <listViews>
+        <fullName>Black_List</fullName>
+        <columns>NAME</columns>
+        <columns>Status__c</columns>
+        <columns>Uses_Count__c</columns>
+        <columns>Last_Used_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>Cleaning Required,Damaged</value>
+        </filters>
+        <label>The Black List</label>
+    </listViews>
+    <listViews>
+        <fullName>Candidate_Cleaning_List</fullName>
+        <columns>NAME</columns>
+        <columns>Status__c</columns>
+        <columns>Uses_Count__c</columns>
+        <columns>Swap_Comments__c</columns>
+        <columns>Last_Used_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>notEqual</operation>
+            <value>Unassigned</value>
+        </filters>
+        <label>Candidate Cleaning List</label>
+    </listViews>
+    <listViews>
+        <fullName>In_Use</fullName>
+        <columns>NAME</columns>
+        <columns>Status__c</columns>
+        <columns>Uses_Count__c</columns>
+        <columns>Last_used_by__c</columns>
+        <columns>Last_Used_Date__c</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Status__c</field>
+            <operation>equals</operation>
+            <value>In Use</value>
+        </filters>
+        <label>In Use</label>
+    </listViews>
+</CustomObject>

@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomObject xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fields>
+        <fullName>Bag_Status__c</fullName>
+        <description>Just to display the current bag status.</description>
+        <externalId>false</externalId>
+        <formula>text( Bag__r.Status__c )</formula>
+        <formulaTreatBlanksAs>BlankAsZero</formulaTreatBlanksAs>
+        <label>Bag Status</label>
+        <required>false</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Text</type>
+        <unique>false</unique>
+    </fields>
+    <fields>
+        <fullName>Bag__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Sleeping Bag</label>
+        <lookupFilter>
+            <active>false</active>
+            <filterItems>
+                <field>Bag__c.Status__c</field>
+                <operation>equals</operation>
+                <value>Unassigned</value>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
+        <referenceTo>Bag__c</referenceTo>
+        <relationshipLabel>Bag Checkout logs</relationshipLabel>
+        <relationshipName>Bag_Checkouts</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Checkin__c</fullName>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <description>Relates the bag check log to what checking fired created this record.</description>
+        <externalId>false</externalId>
+        <label>Checkin</label>
+        <referenceTo>Checkin__c</referenceTo>
+        <relationshipLabel>Bag Check logs</relationshipLabel>
+        <relationshipName>Bag_Check_logs</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Client__c</fullName>
+        <businessStatus>Active</businessStatus>
+        <deleteConstraint>SetNull</deleteConstraint>
+        <externalId>false</externalId>
+        <label>Client</label>
+        <lookupFilter>
+            <active>true</active>
+            <errorMessage>Only Clients can be selected. Update the Contact Record Type to = Client</errorMessage>
+            <filterItems>
+                <field>Contact.RecordTypeId</field>
+                <operation>equals</operation>
+                <value>Client</value>
+            </filterItems>
+            <isOptional>false</isOptional>
+        </lookupFilter>
+        <referenceTo>Contact</referenceTo>
+        <relationshipLabel>Bag Check logs</relationshipLabel>
+        <relationshipName>Bag_Check_Log</relationshipName>
+        <required>false</required>
+        <trackHistory>true</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Lookup</type>
+    </fields>
+    <fields>
+        <fullName>Date__c</fullName>
+        <defaultValue>Today()</defaultValue>
+        <externalId>false</externalId>
+        <label>Date</label>
+        <required>true</required>
+        <trackHistory>false</trackHistory>
+        <trackTrending>false</trackTrending>
+        <type>Date</type>
+    </fields>
+    <listViews>
+        <fullName>Last_3_days</fullName>
+        <columns>Client__c</columns>
+        <columns>Bag__c</columns>
+        <columns>Date__c</columns>
+        <columns>NAME</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Date__c</field>
+            <operation>equals</operation>
+            <value>LAST_N_DAYS:4</value>
+        </filters>
+        <filters>
+            <field>Date__c</field>
+            <operation>notEqual</operation>
+            <value>TODAY</value>
+        </filters>
+        <label>Last 3 days</label>
+    </listViews>
+    <listViews>
+        <fullName>Today_Logs</fullName>
+        <columns>Client__c</columns>
+        <columns>Bag__c</columns>
+        <columns>NAME</columns>
+        <filterScope>Everything</filterScope>
+        <filters>
+            <field>Date__c</field>
+            <operation>equals</operation>
+            <value>TODAY</value>
+        </filters>
+        <label>Today&apos;s Checkins</label>
+    </listViews>
+</CustomObject>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <assignments>
+        <description>used only for debugging purpose</description>
+        <name>debug</name>
+        <label>debug</label>
+        <locationX>80</locationX>
+        <locationY>237</locationY>
+        <assignmentItems>
+            <assignToReference>var_ClientID</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>0031N00002A57IIQAZ</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Last_Bag_used</targetReference>
+        </connector>
+    </assignments>
+    <description>Given a client, this will find the last bag used by the client, if available. 
+
+Input: Contact record ID
+Output: Bag record ID
+
+Change history:
+Peter Fife Sept 1 2019: Inital</description>
+    <interviewLabel>Bag: Get Last Used bag {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Bag: Get Last Used bag</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>This will find the last bag used by the client, as long as the bag is good to use.</description>
+        <name>Get_Last_Bag_used</name>
+        <label>Get Last Bag used</label>
+        <locationX>210</locationX>
+        <locationY>49</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <filters>
+            <field>Last_used_by__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>var_ClientID</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Cleaning Required</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operator>NotEqualTo</operator>
+            <value>
+                <stringValue>Damaged</stringValue>
+            </value>
+        </filters>
+        <object>Bag__c</object>
+        <outputAssignments>
+            <assignToReference>var_bagID</assignToReference>
+            <field>Id</field>
+        </outputAssignments>
+    </recordLookups>
+    <startElementReference>Get_Last_Bag_used</startElementReference>
+    <status>Active</status>
+    <variables>
+        <name>var_bagID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>true</isOutput>
+    </variables>
+    <variables>
+        <description>the contact record ID</description>
+        <name>var_ClientID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+        <value>
+            <stringValue></stringValue>
+        </value>
+    </variables>
+</Flow>
