@@ -1,0 +1,194 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <actionCalls>
+        <name>Mentor_Not_Found</name>
+        <label>Mentor Not Found</label>
+        <locationX>375</locationX>
+        <locationY>243</locationY>
+        <actionName>chatterPost</actionName>
+        <actionType>chatterPost</actionType>
+        <inputParameters>
+            <name>subjectNameOrId</name>
+            <value>
+                <elementReference>var_UserID</elementReference>
+            </value>
+        </inputParameters>
+        <inputParameters>
+            <name>text</name>
+            <value>
+                <stringValue>The Client owner was not updated</stringValue>
+            </value>
+        </inputParameters>
+    </actionCalls>
+    <decisions>
+        <description>Was user record found</description>
+        <name>User_ID_found</name>
+        <label>User ID found</label>
+        <locationX>377</locationX>
+        <locationY>54</locationY>
+        <defaultConnector>
+            <targetReference>Mentor_Not_Found</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_User</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Update_Contact_Record</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <description>Added new input variable var_relationshipType to pass to the subflow - &apos;Mentoring Change&apos; user story
+
+Input: email, contactId, relationshipId, relationshipType
+Output: User ID
+
+Change log:
+Peter Fife: Oct 21 2019: Added chatter post message when Ownership wasn&apos;t changed. 
+Monica Tahiliani Oct 4th 2019: Added the new input variable var_relationshipType
+Monica Tahiliani Oct 3rd 2019: Adjusted the way the Subflow is called. Start is now connected to the Subflow, and the Subflow is connected to the GetRecords element.
+Peter Fife March 18th 2019: removed firing the Former flow. Bug with it always updating the current record to be former instead of current.
+Peter Fife March 16 2019: Created</description>
+    <interviewLabel>Get User ID {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>Get User ID</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>AutoLaunchedFlow</processType>
+    <recordLookups>
+        <description>From the email address being passed in, return the matching user ID</description>
+        <name>Get_User</name>
+        <label>Get User</label>
+        <locationX>256</locationX>
+        <locationY>52</locationY>
+        <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>User_ID_found</targetReference>
+        </connector>
+        <filters>
+            <field>Email</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>var_email</elementReference>
+            </value>
+        </filters>
+        <object>User</object>
+        <outputAssignments>
+            <assignToReference>var_UserID</assignToReference>
+            <field>Id</field>
+        </outputAssignments>
+    </recordLookups>
+    <recordUpdates>
+        <description>Updates the owner of the contact to be the mentor.</description>
+        <name>Update_Contact_Record</name>
+        <label>Update Contact Record</label>
+        <locationX>536</locationX>
+        <locationY>53</locationY>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>var_contactID</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>OwnerId</field>
+            <value>
+                <elementReference>var_UserID</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Contact</object>
+    </recordUpdates>
+    <start>
+        <locationX>33</locationX>
+        <locationY>52</locationY>
+        <connector>
+            <targetReference>flow_Set_Former</targetReference>
+        </connector>
+    </start>
+    <status>Obsolete</status>
+    <subflows>
+        <description>Used to set the previous records to former</description>
+        <name>flow_Set_Former</name>
+        <label>Set Former</label>
+        <locationX>148</locationX>
+        <locationY>52</locationY>
+        <connector>
+            <targetReference>Get_User</targetReference>
+        </connector>
+        <flowName>Relationships_Set_Former_Mentors</flowName>
+        <inputAssignments>
+            <name>var_contactID</name>
+            <value>
+                <elementReference>var_contactID</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>var_RelationshipID</name>
+            <value>
+                <elementReference>var_relationshipID</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <name>var_relationshipType</name>
+            <value>
+                <elementReference>var_relationshipType</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <variables>
+        <description>Captures the contact record of the client record</description>
+        <name>var_contactID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>email address</description>
+        <name>var_email</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <description>Current relationship record ID that started this process</description>
+        <name>var_relationshipID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>var_relationshipType</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>var_UserID</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>

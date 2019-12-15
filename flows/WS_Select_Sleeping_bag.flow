@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Flow xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <decisions>
+        <description>Used to determine which process started the flow.</description>
+        <name>dec_What_process</name>
+        <label>What process</label>
+        <locationX>336</locationX>
+        <locationY>167</locationY>
+        <defaultConnectorLabel>Default Outcome</defaultConnectorLabel>
+        <rules>
+            <name>out_Assign_Bag</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Bag_Check_Log_record.Bag__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>true</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Assign_Bag</targetReference>
+            </connector>
+            <label>Assign Bag</label>
+        </rules>
+        <rules>
+            <name>out_Swap_bags</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Bag_Check_Log_record.Bag__c</leftValueReference>
+                <operator>IsNull</operator>
+                <rightValue>
+                    <booleanValue>false</booleanValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Swap_Bags</targetReference>
+            </connector>
+            <label>Swap bags</label>
+        </rules>
+    </decisions>
+    <description>Used by a quick action from the Bag Check Log as the way to assign or swap sleeping bags for clients.
+
+input: recordId
+
+History:
+Peter Fife Nov 2019: Added the swapping logic
+Peter Fife Oct 2019: Initial</description>
+    <dynamicChoiceSets>
+        <name>pck_bag_status</name>
+        <dataType>Picklist</dataType>
+        <displayField xsi:nil="true"/>
+        <object xsi:nil="true"/>
+        <picklistField>Status__c</picklistField>
+        <picklistObject>Bag__c</picklistObject>
+    </dynamicChoiceSets>
+    <dynamicChoiceSets>
+        <name>rch_AvailableSleepingBags</name>
+        <dataType>String</dataType>
+        <displayField>Name</displayField>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>Unassigned</stringValue>
+            </value>
+        </filters>
+        <object>Bag__c</object>
+        <outputAssignments>
+            <assignToReference>var_SleepingBag</assignToReference>
+            <field>Id</field>
+        </outputAssignments>
+        <sortField>Name</sortField>
+        <sortOrder>Asc</sortOrder>
+        <valueField>Id</valueField>
+    </dynamicChoiceSets>
+    <formulas>
+        <name>frm_LastCount_plus1</name>
+        <dataType>Number</dataType>
+        <expression>{!Get_Sleeping_Bag.Uses_Count__c}+1</expression>
+        <scale>0</scale>
+    </formulas>
+    <interviewLabel>WS Select Sleeping bag {!$Flow.CurrentDateTime}</interviewLabel>
+    <label>WS Select Sleeping bag</label>
+    <processMetadataValues>
+        <name>BuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processMetadataValues>
+        <name>OriginBuilderType</name>
+        <value>
+            <stringValue>LightningFlowBuilder</stringValue>
+        </value>
+    </processMetadataValues>
+    <processType>Flow</processType>
+    <recordLookups>
+        <name>Get_Bag_Check_Log_record</name>
+        <label>Get Bag Check Log record</label>
+        <locationX>191</locationX>
+        <locationY>164</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>dec_What_process</targetReference>
+        </connector>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Bag_Check_log__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Bag__c</queriedFields>
+        <queriedFields>Client__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordLookups>
+        <name>Get_Sleeping_Bag</name>
+        <label>Get Sleeping Bag</label>
+        <locationX>676</locationX>
+        <locationY>160</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Update_Sleeping_Bag</targetReference>
+        </connector>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>input_Select_Sleeping_Bag</elementReference>
+            </value>
+        </filters>
+        <getFirstRecordOnly>true</getFirstRecordOnly>
+        <object>Bag__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Uses_Count__c</queriedFields>
+        <storeOutputAutomatically>true</storeOutputAutomatically>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_Check_in_Log</name>
+        <label>Update Check in Log</label>
+        <locationX>816</locationX>
+        <locationY>345</locationY>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Bag__c</field>
+            <value>
+                <elementReference>var_SleepingBag</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Bag_Check_log__c</object>
+    </recordUpdates>
+    <recordUpdates>
+        <description>Updates the sleeping bag based on the previous screen selection.</description>
+        <name>Update_Sleeping_Bag</name>
+        <label>Update Sleeping Bag</label>
+        <locationX>819</locationX>
+        <locationY>163</locationY>
+        <connector>
+            <targetReference>Update_Check_in_Log</targetReference>
+        </connector>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>input_Select_Sleeping_Bag</elementReference>
+            </value>
+        </filters>
+        <inputAssignments>
+            <field>Last_Used_Date__c</field>
+            <value>
+                <elementReference>$Flow.CurrentDate</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Last_used_by__c</field>
+            <value>
+                <elementReference>Get_Bag_Check_Log_record.Client__c</elementReference>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Status__c</field>
+            <value>
+                <stringValue>In Use</stringValue>
+            </value>
+        </inputAssignments>
+        <inputAssignments>
+            <field>Uses_Count__c</field>
+            <value>
+                <elementReference>frm_LastCount_plus1</elementReference>
+            </value>
+        </inputAssignments>
+        <object>Bag__c</object>
+    </recordUpdates>
+    <screens>
+        <name>Assign_Bag</name>
+        <label>Assign Bag</label>
+        <locationX>548</locationX>
+        <locationY>161</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>Get_Sleeping_Bag</targetReference>
+        </connector>
+        <fields>
+            <name>input_Select_Sleeping_Bag</name>
+            <choiceReferences>rch_AvailableSleepingBags</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Select Sleeping Bag</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>false</showHeader>
+    </screens>
+    <start>
+        <locationX>50</locationX>
+        <locationY>160</locationY>
+        <connector>
+            <targetReference>Get_Bag_Check_Log_record</targetReference>
+        </connector>
+    </start>
+    <status>Active</status>
+    <subflows>
+        <name>Swap_Bags</name>
+        <label>Swap Bags</label>
+        <locationX>345</locationX>
+        <locationY>352</locationY>
+        <flowName>WS_Swap_sleeping_bags</flowName>
+        <inputAssignments>
+            <name>recordId</name>
+            <value>
+                <elementReference>recordId</elementReference>
+            </value>
+        </inputAssignments>
+    </subflows>
+    <variables>
+        <description>This is the Bag Checkout log record ID</description>
+        <name>recordId</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>true</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+    <variables>
+        <name>var_SleepingBag</name>
+        <dataType>String</dataType>
+        <isCollection>false</isCollection>
+        <isInput>false</isInput>
+        <isOutput>false</isOutput>
+    </variables>
+</Flow>
