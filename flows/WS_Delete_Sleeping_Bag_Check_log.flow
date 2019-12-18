@@ -70,19 +70,11 @@
                 <elementReference>$Flow.CurrentDate</elementReference>
             </value>
         </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Bag_Check_log__c</object>
         <queriedFields>Id</queriedFields>
         <queriedFields>Bag__c</queriedFields>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
-    <start>
-        <locationX>50</locationX>
-        <locationY>50</locationY>
-        <connector>
-            <targetReference>Get_Bag_Checkouts</targetReference>
-        </connector>
-    </start>
+    <startElementReference>Get_Bag_Checkouts</startElementReference>
     <status>Active</status>
     <variables>
         <name>var_CheckinID</name>

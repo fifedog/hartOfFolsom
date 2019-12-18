@@ -207,14 +207,12 @@ Peter Fife Nov 2019: Initial.</description>
                 <elementReference>recordId</elementReference>
             </value>
         </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Bag_Check_log__c</object>
         <queriedFields>Id</queriedFields>
         <queriedFields>Date__c</queriedFields>
         <queriedFields>Bag_Status__c</queriedFields>
         <queriedFields>Bag__c</queriedFields>
         <queriedFields>Client__c</queriedFields>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
         <description>gets the details of the new sleeping bag</description>
@@ -233,14 +231,12 @@ Peter Fife Nov 2019: Initial.</description>
                 <elementReference>input_Select_a_New_Sleeping_Bag</elementReference>
             </value>
         </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Bag__c</object>
         <queriedFields>Id</queriedFields>
         <queriedFields>Name</queriedFields>
         <queriedFields>Status__c</queriedFields>
         <queriedFields>Uses_Count__c</queriedFields>
         <queriedFields>Last_used_by__c</queriedFields>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
         <description>gets the details of the sleeping bag</description>
@@ -259,13 +255,11 @@ Peter Fife Nov 2019: Initial.</description>
                 <elementReference>Get_Bag_Checkin.Bag__c</elementReference>
             </value>
         </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Bag__c</object>
         <queriedFields>Id</queriedFields>
         <queriedFields>Name</queriedFields>
         <queriedFields>Status__c</queriedFields>
         <queriedFields>Uses_Count__c</queriedFields>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordUpdates>
         <name>Update_Bag_Check_log</name>
@@ -360,13 +354,7 @@ Peter Fife Nov 2019: Initial.</description>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
     </screens>
-    <start>
-        <locationX>50</locationX>
-        <locationY>128</locationY>
-        <connector>
-            <targetReference>Get_Bag_Checkin</targetReference>
-        </connector>
-    </start>
+    <startElementReference>Get_Bag_Checkin</startElementReference>
     <status>Active</status>
     <variables>
         <description>Holds the original and new sleeping bags</description>

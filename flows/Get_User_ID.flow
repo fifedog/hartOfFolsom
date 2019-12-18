@@ -116,13 +116,7 @@ Peter Fife March 16 2019: Created</description>
         </inputAssignments>
         <object>Contact</object>
     </recordUpdates>
-    <start>
-        <locationX>33</locationX>
-        <locationY>52</locationY>
-        <connector>
-            <targetReference>flow_Set_Former</targetReference>
-        </connector>
-    </start>
+    <startElementReference>flow_Set_Former</startElementReference>
     <status>Obsolete</status>
     <subflows>
         <description>Used to set the previous records to former</description>

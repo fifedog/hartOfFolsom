@@ -310,13 +310,7 @@ PF Feb3 initial</description>
         </inputAssignments>
         <object>Bag__c</object>
     </recordUpdates>
-    <start>
-        <locationX>50</locationX>
-        <locationY>50</locationY>
-        <connector>
-            <targetReference>Get_today_s_checkout_logs</targetReference>
-        </connector>
-    </start>
+    <startElementReference>Get_today_s_checkout_logs</startElementReference>
     <status>Active</status>
     <subflows>
         <name>Get_Bag</name>

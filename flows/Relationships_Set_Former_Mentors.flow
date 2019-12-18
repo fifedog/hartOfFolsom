@@ -198,13 +198,7 @@ Monica Tahiliani October 4th 2019: Updated</description>
         <locationY>319</locationY>
         <inputReference>col_NewRelationshipCollection</inputReference>
     </recordUpdates>
-    <start>
-        <locationX>50</locationX>
-        <locationY>273</locationY>
-        <connector>
-            <targetReference>Relationship_Type</targetReference>
-        </connector>
-    </start>
+    <startElementReference>Relationship_Type</startElementReference>
     <status>Active</status>
     <variables>
         <name>col_NewRelationshipCollection</name>
