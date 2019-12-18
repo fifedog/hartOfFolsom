@@ -43,6 +43,7 @@
 input: recordId
 
 History:
+Peter Fife Dec 17th 2019: Fixed Last Used Date/Time bug
 Peter Fife Nov 2019: Added the swapping logic
 Peter Fife Oct 2019: Initial</description>
     <dynamicChoiceSets>
@@ -110,12 +111,10 @@ Peter Fife Oct 2019: Initial</description>
                 <elementReference>recordId</elementReference>
             </value>
         </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Bag_Check_log__c</object>
         <queriedFields>Id</queriedFields>
         <queriedFields>Bag__c</queriedFields>
         <queriedFields>Client__c</queriedFields>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
         <name>Get_Sleeping_Bag</name>
@@ -133,11 +132,9 @@ Peter Fife Oct 2019: Initial</description>
                 <elementReference>input_Select_Sleeping_Bag</elementReference>
             </value>
         </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Bag__c</object>
         <queriedFields>Id</queriedFields>
         <queriedFields>Uses_Count__c</queriedFields>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordUpdates>
         <name>Update_Check_in_Log</name>
@@ -178,7 +175,7 @@ Peter Fife Oct 2019: Initial</description>
         <inputAssignments>
             <field>Last_Used_Date__c</field>
             <value>
-                <elementReference>$Flow.CurrentDate</elementReference>
+                <elementReference>$Flow.CurrentDateTime</elementReference>
             </value>
         </inputAssignments>
         <inputAssignments>
@@ -223,14 +220,8 @@ Peter Fife Oct 2019: Initial</description>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
     </screens>
-    <start>
-        <locationX>50</locationX>
-        <locationY>160</locationY>
-        <connector>
-            <targetReference>Get_Bag_Check_Log_record</targetReference>
-        </connector>
-    </start>
-    <status>Active</status>
+    <startElementReference>Get_Bag_Check_Log_record</startElementReference>
+    <status>Draft</status>
     <subflows>
         <name>Swap_Bags</name>
         <label>Swap Bags</label>
