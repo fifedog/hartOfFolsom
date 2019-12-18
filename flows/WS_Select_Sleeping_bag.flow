@@ -221,7 +221,7 @@ Peter Fife Oct 2019: Initial</description>
         <showHeader>false</showHeader>
     </screens>
     <startElementReference>Get_Bag_Check_Log_record</startElementReference>
-    <status>Draft</status>
+    <status>Active</status>
     <subflows>
         <name>Swap_Bags</name>
         <label>Swap Bags</label>
