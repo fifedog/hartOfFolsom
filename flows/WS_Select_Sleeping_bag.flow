@@ -1,5 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <assignments>
+        <name>debug_start</name>
+        <label>debug start</label>
+        <locationX>50</locationX>
+        <locationY>284</locationY>
+        <assignmentItems>
+            <assignToReference>recordId</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>a0r8A000000SDObQAO</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Bag_Check_Log_record</targetReference>
+        </connector>
+    </assignments>
+    <choices>
+        <name>ch_UsedBag</name>
+        <choiceText>Select used bag</choiceText>
+        <dataType>String</dataType>
+        <value>
+            <stringValue>Used</stringValue>
+        </value>
+    </choices>
+    <decisions>
+        <description>determines if a used bag is selected</description>
+        <name>dec_Used_bag_selected</name>
+        <label>Used bag selected</label>
+        <locationX>720</locationX>
+        <locationY>161</locationY>
+        <defaultConnector>
+            <targetReference>Get_Sleeping_Bag</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No</defaultConnectorLabel>
+        <rules>
+            <name>dec_Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>input_Select_Sleeping_Bag</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <stringValue>Used</stringValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Select_Used_Bag</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
     <decisions>
         <description>Used to determine which process started the flow.</description>
         <name>dec_What_process</name>
@@ -43,6 +93,7 @@
 input: recordId
 
 History:
+Peter Fife Dec 27 2019: Enhancement: Allow people to select used bags (https://github.com/fifedog/hartOfFolsom/issues/7)
 Peter Fife Dec 17th 2019: Fixed Last Used Date/Time bug
 Peter Fife Nov 2019: Added the swapping logic
 Peter Fife Oct 2019: Initial</description>
@@ -55,7 +106,8 @@ Peter Fife Oct 2019: Initial</description>
         <picklistObject>Bag__c</picklistObject>
     </dynamicChoiceSets>
     <dynamicChoiceSets>
-        <name>rch_AvailableSleepingBags</name>
+        <description>Grabs any unassigned bags listed.</description>
+        <name>rcs_AvailableSleepingBags</name>
         <dataType>String</dataType>
         <displayField>Name</displayField>
         <filters>
@@ -74,6 +126,46 @@ Peter Fife Oct 2019: Initial</description>
         <sortOrder>Asc</sortOrder>
         <valueField>Id</valueField>
     </dynamicChoiceSets>
+    <dynamicChoiceSets>
+        <description>Used in addition to the current unassigned bags in case if people need to grab a bag already assigned to another person.</description>
+        <name>rcs_UsedSleepingBags</name>
+        <dataType>String</dataType>
+        <displayField>Name</displayField>
+        <filters>
+            <field>Last_Used_Date__c</field>
+            <operator>LessThan</operator>
+            <value>
+                <elementReference>frm_5DaysAgo_dateTime</elementReference>
+            </value>
+        </filters>
+        <filters>
+            <field>Status__c</field>
+            <operator>EqualTo</operator>
+            <value>
+                <stringValue>In Use</stringValue>
+            </value>
+        </filters>
+        <filters>
+            <field>Uses_Count__c</field>
+            <operator>LessThan</operator>
+            <value>
+                <numberValue>3.0</numberValue>
+            </value>
+        </filters>
+        <object>Bag__c</object>
+        <outputAssignments>
+            <assignToReference>var_SleepingBag</assignToReference>
+            <field>Id</field>
+        </outputAssignments>
+        <sortField>Bag_Number__c</sortField>
+        <sortOrder>Asc</sortOrder>
+        <valueField>Id</valueField>
+    </dynamicChoiceSets>
+    <formulas>
+        <name>frm_5DaysAgo_dateTime</name>
+        <dataType>DateTime</dataType>
+        <expression>now()-5</expression>
+    </formulas>
     <formulas>
         <name>frm_LastCount_plus1</name>
         <dataType>Number</dataType>
@@ -119,8 +211,8 @@ Peter Fife Oct 2019: Initial</description>
     <recordLookups>
         <name>Get_Sleeping_Bag</name>
         <label>Get Sleeping Bag</label>
-        <locationX>676</locationX>
-        <locationY>160</locationY>
+        <locationX>909</locationX>
+        <locationY>247</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Update_Sleeping_Bag</targetReference>
@@ -129,18 +221,19 @@ Peter Fife Oct 2019: Initial</description>
             <field>Id</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference>input_Select_Sleeping_Bag</elementReference>
+                <elementReference>var_SleepingBag</elementReference>
             </value>
         </filters>
         <object>Bag__c</object>
         <queriedFields>Id</queriedFields>
         <queriedFields>Uses_Count__c</queriedFields>
+        <queriedFields>Last_Used_Date__c</queriedFields>
     </recordLookups>
     <recordUpdates>
         <name>Update_Check_in_Log</name>
         <label>Update Check in Log</label>
-        <locationX>816</locationX>
-        <locationY>345</locationY>
+        <locationX>1216</locationX>
+        <locationY>243</locationY>
         <filters>
             <field>Id</field>
             <operator>EqualTo</operator>
@@ -160,8 +253,8 @@ Peter Fife Oct 2019: Initial</description>
         <description>Updates the sleeping bag based on the previous screen selection.</description>
         <name>Update_Sleeping_Bag</name>
         <label>Update Sleeping Bag</label>
-        <locationX>819</locationX>
-        <locationY>163</locationY>
+        <locationX>1053</locationX>
+        <locationY>243</locationY>
         <connector>
             <targetReference>Update_Check_in_Log</targetReference>
         </connector>
@@ -169,7 +262,7 @@ Peter Fife Oct 2019: Initial</description>
             <field>Id</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference>input_Select_Sleeping_Bag</elementReference>
+                <elementReference>var_SleepingBag</elementReference>
             </value>
         </filters>
         <inputAssignments>
@@ -201,8 +294,36 @@ Peter Fife Oct 2019: Initial</description>
     <screens>
         <name>Assign_Bag</name>
         <label>Assign Bag</label>
-        <locationX>548</locationX>
-        <locationY>161</locationY>
+        <locationX>540</locationX>
+        <locationY>164</locationY>
+        <allowBack>false</allowBack>
+        <allowFinish>true</allowFinish>
+        <allowPause>false</allowPause>
+        <connector>
+            <targetReference>dec_Used_bag_selected</targetReference>
+        </connector>
+        <fields>
+            <name>txt_UsedBags</name>
+            <fieldText>&lt;p&gt;&lt;b&gt;IF&lt;/b&gt; no bags showing up choose &quot;Select Used Bag&quot; and continue to select from a list of used bags. &lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>input_Select_Sleeping_Bag</name>
+            <choiceReferences>rcs_AvailableSleepingBags</choiceReferences>
+            <choiceReferences>ch_UsedBag</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Select Sleeping Bag</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
+        </fields>
+        <showFooter>true</showFooter>
+        <showHeader>false</showHeader>
+    </screens>
+    <screens>
+        <name>Select_Used_Bag</name>
+        <label>Select Used Bag</label>
+        <locationX>729</locationX>
+        <locationY>373</locationY>
         <allowBack>false</allowBack>
         <allowFinish>true</allowFinish>
         <allowPause>false</allowPause>
@@ -210,10 +331,15 @@ Peter Fife Oct 2019: Initial</description>
             <targetReference>Get_Sleeping_Bag</targetReference>
         </connector>
         <fields>
-            <name>input_Select_Sleeping_Bag</name>
-            <choiceReferences>rch_AvailableSleepingBags</choiceReferences>
+            <name>txt_UsedBags_0</name>
+            <fieldText>&lt;p&gt;Choose from one of the following used bags. Bags used less than 3 times and over 5 days will show up in the list&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+        </fields>
+        <fields>
+            <name>input_Select_Used_Bag</name>
+            <choiceReferences>rcs_UsedSleepingBags</choiceReferences>
             <dataType>String</dataType>
-            <fieldText>Select Sleeping Bag</fieldText>
+            <fieldText>Select Used Bag</fieldText>
             <fieldType>DropdownBox</fieldType>
             <isRequired>true</isRequired>
         </fields>
