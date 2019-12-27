@@ -1,10 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <assignments>
+        <name>asg_Set_Unused_Bag</name>
+        <label>Set Unused Bag</label>
+        <locationX>836</locationX>
+        <locationY>165</locationY>
+        <assignmentItems>
+            <assignToReference>var_SleepingBag</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>input_Select_Sleeping_Bag</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Sleeping_Bag</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <name>asg_Set_Used_Bag</name>
+        <label>Set Used Bag</label>
+        <locationX>693</locationX>
+        <locationY>375</locationY>
+        <assignmentItems>
+            <assignToReference>var_SleepingBag</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <elementReference>input_Used_Bags</elementReference>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Get_Sleeping_Bag</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
         <name>debug_start</name>
         <label>debug start</label>
-        <locationX>50</locationX>
-        <locationY>284</locationY>
+        <locationX>52</locationX>
+        <locationY>219</locationY>
         <assignmentItems>
             <assignToReference>recordId</assignToReference>
             <operator>Assign</operator>
@@ -28,10 +60,10 @@
         <description>determines if a used bag is selected</description>
         <name>dec_Used_bag_selected</name>
         <label>Used bag selected</label>
-        <locationX>720</locationX>
-        <locationY>161</locationY>
+        <locationX>690</locationX>
+        <locationY>167</locationY>
         <defaultConnector>
-            <targetReference>Get_Sleeping_Bag</targetReference>
+            <targetReference>asg_Set_Unused_Bag</targetReference>
         </defaultConnector>
         <defaultConnectorLabel>No</defaultConnectorLabel>
         <rules>
@@ -45,7 +77,7 @@
                 </rightValue>
             </conditions>
             <connector>
-                <targetReference>Select_Used_Bag</targetReference>
+                <targetReference>asg_Set_Used_Bag</targetReference>
             </connector>
             <label>Yes</label>
         </rules>
@@ -211,8 +243,8 @@ Peter Fife Oct 2019: Initial</description>
     <recordLookups>
         <name>Get_Sleeping_Bag</name>
         <label>Get Sleeping Bag</label>
-        <locationX>909</locationX>
-        <locationY>247</locationY>
+        <locationX>973</locationX>
+        <locationY>314</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Update_Sleeping_Bag</targetReference>
@@ -232,8 +264,8 @@ Peter Fife Oct 2019: Initial</description>
     <recordUpdates>
         <name>Update_Check_in_Log</name>
         <label>Update Check in Log</label>
-        <locationX>1216</locationX>
-        <locationY>243</locationY>
+        <locationX>1287</locationX>
+        <locationY>311</locationY>
         <filters>
             <field>Id</field>
             <operator>EqualTo</operator>
@@ -253,8 +285,8 @@ Peter Fife Oct 2019: Initial</description>
         <description>Updates the sleeping bag based on the previous screen selection.</description>
         <name>Update_Sleeping_Bag</name>
         <label>Update Sleeping Bag</label>
-        <locationX>1053</locationX>
-        <locationY>243</locationY>
+        <locationX>1116</locationX>
+        <locationY>311</locationY>
         <connector>
             <targetReference>Update_Check_in_Log</targetReference>
         </connector>
@@ -316,32 +348,38 @@ Peter Fife Oct 2019: Initial</description>
             <fieldType>DropdownBox</fieldType>
             <isRequired>true</isRequired>
         </fields>
-        <showFooter>true</showFooter>
-        <showHeader>false</showHeader>
-    </screens>
-    <screens>
-        <name>Select_Used_Bag</name>
-        <label>Select Used Bag</label>
-        <locationX>729</locationX>
-        <locationY>373</locationY>
-        <allowBack>false</allowBack>
-        <allowFinish>true</allowFinish>
-        <allowPause>false</allowPause>
-        <connector>
-            <targetReference>Get_Sleeping_Bag</targetReference>
-        </connector>
         <fields>
-            <name>txt_UsedBags_0</name>
-            <fieldText>&lt;p&gt;Choose from one of the following used bags. Bags used less than 3 times and over 5 days will show up in the list&lt;/p&gt;</fieldText>
-            <fieldType>DisplayText</fieldType>
-        </fields>
-        <fields>
-            <name>input_Select_Used_Bag</name>
+            <name>input_Used_Bags</name>
             <choiceReferences>rcs_UsedSleepingBags</choiceReferences>
             <dataType>String</dataType>
-            <fieldText>Select Used Bag</fieldText>
+            <fieldText>Selected Used Bags</fieldText>
             <fieldType>DropdownBox</fieldType>
             <isRequired>true</isRequired>
+            <visibilityRule>
+                <conditionLogic>and</conditionLogic>
+                <conditions>
+                    <leftValueReference>input_Select_Sleeping_Bag</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <elementReference>ch_UsedBag</elementReference>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
+        </fields>
+        <fields>
+            <name>txt_UsedBags0</name>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(62, 62, 60);&quot;&gt;Choose from one of the following used bags. Bags used less than 3 times and over 5 days will show up in the list.&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
+            <visibilityRule>
+                <conditionLogic>and</conditionLogic>
+                <conditions>
+                    <leftValueReference>input_Select_Sleeping_Bag</leftValueReference>
+                    <operator>EqualTo</operator>
+                    <rightValue>
+                        <elementReference>ch_UsedBag</elementReference>
+                    </rightValue>
+                </conditions>
+            </visibilityRule>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
