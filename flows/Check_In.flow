@@ -299,12 +299,10 @@ PF Dec 3 2019: Updated initial screen, removed Fname and Lname. Added additional
                 <stringValue>Contact</stringValue>
             </value>
         </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>RecordType</object>
         <queriedFields>Id</queriedFields>
         <queriedFields>Name</queriedFields>
         <queriedFields>SobjectType</queriedFields>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
         <description>Searches the database on the exact match for first name and last name and prevents the contact from being created again</description>
@@ -330,14 +328,12 @@ PF Dec 3 2019: Updated initial screen, removed Fname and Lname. Added additional
                 <elementReference>frm_LastName_Proper</elementReference>
             </value>
         </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Contact</object>
         <queriedFields>Id</queriedFields>
         <queriedFields>FirstName</queriedFields>
         <queriedFields>LastName</queriedFields>
         <sortField>Id</sortField>
         <sortOrder>Asc</sortOrder>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <recordLookups>
         <description>Retrieves current check-ins for today based on the contact&apos;s ID</description>
@@ -356,13 +352,11 @@ PF Dec 3 2019: Updated initial screen, removed Fname and Lname. Added additional
                 <elementReference>sob_Checkin.Client__c</elementReference>
             </value>
         </filters>
-        <getFirstRecordOnly>true</getFirstRecordOnly>
         <object>Checkin__c</object>
         <queriedFields>Id</queriedFields>
         <queriedFields>Checkin_Date_Time__c</queriedFields>
         <sortField>Checkin_Date_Time__c</sortField>
         <sortOrder>Desc</sortOrder>
-        <storeOutputAutomatically>true</storeOutputAutomatically>
     </recordLookups>
     <screens>
         <name>scr_AlreadyCheckin</name>
@@ -430,7 +424,6 @@ PF Dec 3 2019: Updated initial screen, removed Fname and Lname. Added additional
                 </value>
             </inputParameters>
             <isRequired>true</isRequired>
-            <storeOutputAutomatically>true</storeOutputAutomatically>
         </fields>
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
@@ -519,13 +512,7 @@ PF Dec 3 2019: Updated initial screen, removed Fname and Lname. Added additional
         <showFooter>true</showFooter>
         <showHeader>false</showHeader>
     </screens>
-    <start>
-        <locationX>50</locationX>
-        <locationY>50</locationY>
-        <connector>
-            <targetReference>Get_Client_RecordTypeID</targetReference>
-        </connector>
-    </start>
+    <startElementReference>Get_Client_RecordTypeID</startElementReference>
     <status>Active</status>
     <variables>
         <name>sob_Checkin</name>
