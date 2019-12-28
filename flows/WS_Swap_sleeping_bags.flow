@@ -447,13 +447,9 @@ Peter Fife Nov 2019: Initial.</description>
             <isRequired>true</isRequired>
         </fields>
         <fields>
-            <name>Input_Used_Bags</name>
-            <choiceReferences>rcs_UsedBags</choiceReferences>
-            <choiceReferences>NULL</choiceReferences>
-            <dataType>String</dataType>
-            <fieldText>Used Bags</fieldText>
-            <fieldType>DropdownBox</fieldType>
-            <isRequired>true</isRequired>
+            <name>txt_usedbags</name>
+            <fieldText>&lt;p&gt;Used bags listed are those with less than 3 uses and lasted used more than 5 days ago, &lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(62, 62, 60);&quot;&gt;{!frm_5DaysAgo}&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
                 <conditions>
@@ -466,9 +462,13 @@ Peter Fife Nov 2019: Initial.</description>
             </visibilityRule>
         </fields>
         <fields>
-            <name>txt_usedbags</name>
-            <fieldText>&lt;p&gt;Used bags listed are: those with less than 3 uses and lasted used more than 5 days ago.&lt;/p&gt;</fieldText>
-            <fieldType>DisplayText</fieldType>
+            <name>Input_Used_Bags</name>
+            <choiceReferences>rcs_UsedBags</choiceReferences>
+            <choiceReferences>NULL</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Used Bags</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
                 <conditions>

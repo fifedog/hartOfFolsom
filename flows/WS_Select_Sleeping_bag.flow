@@ -60,8 +60,8 @@
         <description>determines if a used bag is selected</description>
         <name>dec_Used_bag_selected</name>
         <label>Used bag selected</label>
-        <locationX>690</locationX>
-        <locationY>167</locationY>
+        <locationX>685</locationX>
+        <locationY>170</locationY>
         <defaultConnector>
             <targetReference>asg_Set_Unused_Bag</targetReference>
         </defaultConnector>
@@ -336,7 +336,7 @@ Peter Fife Oct 2019: Initial</description>
         </connector>
         <fields>
             <name>txt_UsedBags</name>
-            <fieldText>&lt;p&gt;&lt;b&gt;IF&lt;/b&gt; no bags showing up choose &quot;Select Used Bag&quot; and continue to select from a list of used bags. &lt;/p&gt;</fieldText>
+            <fieldText>&lt;p&gt;&lt;b style=&quot;color: rgb(208, 5, 5);&quot;&gt;Verify&lt;/b&gt;&lt;b&gt; bag is at Host site before assigning to client.&lt;/b&gt; If an unused sleeping bag at host site isn&apos;t showing in list then choose the &quot;Select used bag&quot; option. This will display a new list of used bags you can choose from. &lt;/p&gt;</fieldText>
             <fieldType>DisplayText</fieldType>
         </fields>
         <fields>
@@ -349,12 +349,9 @@ Peter Fife Oct 2019: Initial</description>
             <isRequired>true</isRequired>
         </fields>
         <fields>
-            <name>input_Used_Bags</name>
-            <choiceReferences>rcs_UsedSleepingBags</choiceReferences>
-            <dataType>String</dataType>
-            <fieldText>Selected Used Bags</fieldText>
-            <fieldType>DropdownBox</fieldType>
-            <isRequired>true</isRequired>
+            <name>txt_UsedBags0</name>
+            <fieldText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(62, 62, 60);&quot;&gt;Choose from one of the following used bags. Bags used less than 3 times and over 5 days will show up in the list.&lt;/span&gt;&lt;/p&gt;</fieldText>
+            <fieldType>DisplayText</fieldType>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
                 <conditions>
@@ -367,9 +364,12 @@ Peter Fife Oct 2019: Initial</description>
             </visibilityRule>
         </fields>
         <fields>
-            <name>txt_UsedBags0</name>
-            <fieldText>&lt;p&gt;&lt;span style=&quot;background-color: rgb(255, 255, 255); color: rgb(62, 62, 60);&quot;&gt;Choose from one of the following used bags. Bags used less than 3 times and over 5 days will show up in the list.&lt;/span&gt;&lt;/p&gt;</fieldText>
-            <fieldType>DisplayText</fieldType>
+            <name>input_Used_Bags</name>
+            <choiceReferences>rcs_UsedSleepingBags</choiceReferences>
+            <dataType>String</dataType>
+            <fieldText>Selected Used Bags</fieldText>
+            <fieldType>DropdownBox</fieldType>
+            <isRequired>true</isRequired>
             <visibilityRule>
                 <conditionLogic>and</conditionLogic>
                 <conditions>

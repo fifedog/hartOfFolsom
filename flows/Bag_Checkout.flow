@@ -9,14 +9,14 @@
             <assignToReference>var_RecordID</assignToReference>
             <operator>Assign</operator>
             <value>
-                <stringValue>a0r3l000007pagNAAQ</stringValue>
+                <stringValue>a0r8A000000SDQmQAO</stringValue>
             </value>
         </assignmentItems>
         <assignmentItems>
             <assignToReference>var_clientid</assignToReference>
             <operator>Assign</operator>
             <value>
-                <stringValue>0033l00002LgDgoAAF</stringValue>
+                <stringValue>0033l00002OgHoVAAV</stringValue>
             </value>
         </assignmentItems>
         <connector>
@@ -44,8 +44,8 @@
         <description>Determines if the bag count is null</description>
         <name>Count_null</name>
         <label>Bag Count is null</label>
-        <locationX>47</locationX>
-        <locationY>576</locationY>
+        <locationX>397</locationX>
+        <locationY>614</locationY>
         <defaultConnectorLabel>No Bag</defaultConnectorLabel>
         <rules>
             <name>isNull</name>
@@ -95,8 +95,8 @@
     <decisions>
         <name>Has_Client_ID</name>
         <label>Has Client ID</label>
-        <locationX>47</locationX>
-        <locationY>411</locationY>
+        <locationX>397</locationX>
+        <locationY>449</locationY>
         <defaultConnector>
             <targetReference>Count_null</targetReference>
         </defaultConnector>
@@ -148,9 +148,16 @@
 Inputs: record ID, bag ID, Bag Count
 
 Change log:
+Peter Fife Dec 28 2019: Fixed bug #6 (https://github.com/fifedog/hartOfFolsom/issues/6) Last used date not updating on bag. 
 Peter Fife Oct 2 2019: + logic to prevent duplicates log entries
 Peter Fife Sept 1 2019: Added logic to deal with null bag counts being passed in. 
 PF Feb3 initial</description>
+    <formulas>
+        <description>Is the current date time</description>
+        <name>frm_Now</name>
+        <dataType>DateTime</dataType>
+        <expression>now()</expression>
+    </formulas>
     <formulas>
         <name>frm_Plus1Count</name>
         <dataType>Number</dataType>
@@ -177,8 +184,8 @@ PF Feb3 initial</description>
     <recordLookups>
         <name>Get_Bag_details</name>
         <label>Get Bag details</label>
-        <locationX>443</locationX>
-        <locationY>413</locationY>
+        <locationX>793</locationX>
+        <locationY>451</locationY>
         <assignNullValuesIfNoRecordsFound>true</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Set_Bag_checkout</targetReference>
@@ -202,8 +209,8 @@ PF Feb3 initial</description>
         <description>Used to see if any other bag checkouts exist already</description>
         <name>Get_today_s_checkout_logs</name>
         <label>Get today&apos;s checkout logs</label>
-        <locationX>201</locationX>
-        <locationY>235</locationY>
+        <locationX>206</locationX>
+        <locationY>216</locationY>
         <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
         <connector>
             <targetReference>Record_Found</targetReference>
@@ -237,8 +244,8 @@ PF Feb3 initial</description>
         <description>Updates the initial bag count to be 1 since no count is present</description>
         <name>Initialize_Bag_Count</name>
         <label>Initialize Bag Count</label>
-        <locationX>55</locationX>
-        <locationY>747</locationY>
+        <locationX>405</locationX>
+        <locationY>785</locationY>
         <filters>
             <field>Id</field>
             <operator>EqualTo</operator>
@@ -246,6 +253,12 @@ PF Feb3 initial</description>
                 <elementReference>var_bagID</elementReference>
             </value>
         </filters>
+        <inputAssignments>
+            <field>Last_Used_Date__c</field>
+            <value>
+                <elementReference>frm_Now</elementReference>
+            </value>
+        </inputAssignments>
         <inputAssignments>
             <field>Status__c</field>
             <value>
@@ -264,8 +277,8 @@ PF Feb3 initial</description>
         <description>Updates the current bag checkout log the bag found</description>
         <name>Set_Bag_checkout</name>
         <label>Set Bag Checkout</label>
-        <locationX>443</locationX>
-        <locationY>552</locationY>
+        <locationX>793</locationX>
+        <locationY>590</locationY>
         <connector>
             <targetReference>Count_null</targetReference>
         </connector>
@@ -287,8 +300,8 @@ PF Feb3 initial</description>
     <recordUpdates>
         <name>Update_Bag_Count</name>
         <label>Update Bag Count</label>
-        <locationX>291</locationX>
-        <locationY>624</locationY>
+        <locationX>641</locationX>
+        <locationY>662</locationY>
         <filters>
             <field>Id</field>
             <operator>EqualTo</operator>
@@ -296,6 +309,12 @@ PF Feb3 initial</description>
                 <elementReference>var_bagID</elementReference>
             </value>
         </filters>
+        <inputAssignments>
+            <field>Last_Used_Date__c</field>
+            <value>
+                <elementReference>frm_Now</elementReference>
+            </value>
+        </inputAssignments>
         <inputAssignments>
             <field>Status__c</field>
             <value>
@@ -313,10 +332,11 @@ PF Feb3 initial</description>
     <startElementReference>Get_today_s_checkout_logs</startElementReference>
     <status>Active</status>
     <subflows>
+        <description>Finds the last bag used by client</description>
         <name>Get_Bag</name>
         <label>Get Bag</label>
-        <locationX>301</locationX>
-        <locationY>414</locationY>
+        <locationX>651</locationX>
+        <locationY>452</locationY>
         <connector>
             <targetReference>Get_Bag_details</targetReference>
         </connector>

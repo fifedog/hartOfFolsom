@@ -23,6 +23,7 @@ Input: Contact record ID
 Output: Bag record ID
 
 Change history:
+Peter Fife Dec 27 2019: Part of issue #6 (https://github.com/fifedog/hartOfFolsom/issues/6)
 Peter Fife Sept 1 2019: Inital</description>
     <interviewLabel>Bag: Get Last Used bag {!$Flow.CurrentDateTime}</interviewLabel>
     <label>Bag: Get Last Used bag</label>
@@ -55,16 +56,9 @@ Peter Fife Sept 1 2019: Inital</description>
         </filters>
         <filters>
             <field>Status__c</field>
-            <operator>NotEqualTo</operator>
+            <operator>EqualTo</operator>
             <value>
-                <stringValue>Cleaning Required</stringValue>
-            </value>
-        </filters>
-        <filters>
-            <field>Status__c</field>
-            <operator>NotEqualTo</operator>
-            <value>
-                <stringValue>Damaged</stringValue>
+                <stringValue>In Use</stringValue>
             </value>
         </filters>
         <object>Bag__c</object>
@@ -72,6 +66,8 @@ Peter Fife Sept 1 2019: Inital</description>
             <assignToReference>var_bagID</assignToReference>
             <field>Id</field>
         </outputAssignments>
+        <sortField>Last_Used_Date__c</sortField>
+        <sortOrder>Desc</sortOrder>
     </recordLookups>
     <startElementReference>Get_Last_Bag_used</startElementReference>
     <status>Active</status>
