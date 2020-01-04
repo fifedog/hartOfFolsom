@@ -1,5 +1,57 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Flow xmlns="http://soap.sforce.com/2006/04/metadata">
+    <assignments>
+        <description>need to reset all the bag details.</description>
+        <name>Reset_All_bag_details</name>
+        <label>Reset All bag details</label>
+        <locationX>637</locationX>
+        <locationY>212</locationY>
+        <assignmentItems>
+            <assignToReference>Get_Bag_Details.Uses_Count__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <numberValue>0.0</numberValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_Bag_Details.Last_used_by__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue></stringValue>
+            </value>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_Bag_Details.Last_Used_Date__c</assignToReference>
+            <operator>Assign</operator>
+        </assignmentItems>
+        <assignmentItems>
+            <assignToReference>Get_Bag_Details.Status__c</assignToReference>
+            <operator>Assign</operator>
+            <value>
+                <stringValue>Unassigned</stringValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Bag_details</targetReference>
+        </connector>
+    </assignments>
+    <assignments>
+        <description>Only reset the use count</description>
+        <name>Reset_Use_Count</name>
+        <label>Reset Use Count</label>
+        <locationX>486</locationX>
+        <locationY>415</locationY>
+        <assignmentItems>
+            <assignToReference>Get_Bag_Details.Uses_Count__c</assignToReference>
+            <operator>Subtract</operator>
+            <value>
+                <numberValue>1.0</numberValue>
+            </value>
+        </assignmentItems>
+        <connector>
+            <targetReference>Update_Bag_details</targetReference>
+        </connector>
+    </assignments>
     <decisions>
         <description>Was a record found?</description>
         <name>dec_Record_Found</name>
@@ -7,7 +59,7 @@
         <locationX>337</locationX>
         <locationY>55</locationY>
         <defaultConnector>
-            <targetReference>Delete_Back_Check_log</targetReference>
+            <targetReference>Get_Bag_Details</targetReference>
         </defaultConnector>
         <defaultConnectorLabel>Found</defaultConnectorLabel>
         <rules>
@@ -23,7 +75,42 @@
             <label>Not Found</label>
         </rules>
     </decisions>
-    <description>Called when the Checkin&apos;s status has been updated to turned away. This function deletes the bag check log record since it&apos;s no longer needed.</description>
+    <decisions>
+        <description>Determines if the bag was used for the first time. If so then need to back out all the details and put back to unassigned. Otherwise, just deduct 1 from the use count</description>
+        <name>Used_once</name>
+        <label>Used once</label>
+        <locationX>476</locationX>
+        <locationY>216</locationY>
+        <defaultConnector>
+            <targetReference>Reset_Use_Count</targetReference>
+        </defaultConnector>
+        <defaultConnectorLabel>No</defaultConnectorLabel>
+        <rules>
+            <name>out_Yes</name>
+            <conditionLogic>and</conditionLogic>
+            <conditions>
+                <leftValueReference>Get_Bag_Details.Uses_Count__c</leftValueReference>
+                <operator>EqualTo</operator>
+                <rightValue>
+                    <numberValue>1.0</numberValue>
+                </rightValue>
+            </conditions>
+            <connector>
+                <targetReference>Reset_All_bag_details</targetReference>
+            </connector>
+            <label>Yes</label>
+        </rules>
+    </decisions>
+    <description>Called when the Checkin&apos;s status has been updated to turned away. This function deletes the bag check log record since it&apos;s no longer needed.
+
+Change Log:
+Peter Fife Jan 4 2020: Git issue: https://github.com/fifedog/hartOfFolsom/issues/5 (if the client is turned away set the bag back to unassigned)</description>
+    <formulas>
+        <name>frm_UseCount_LessOne</name>
+        <dataType>Number</dataType>
+        <expression>{!Get_Bag_Details.Uses_Count__c}-1</expression>
+        <scale>0</scale>
+    </formulas>
     <interviewLabel>WS Delete Sleeping Bag Check log {!$Flow.CurrentDateTime}</interviewLabel>
     <label>WS Delete Sleeping Bag Check log</label>
     <processMetadataValues>
@@ -40,10 +127,10 @@
     </processMetadataValues>
     <processType>AutoLaunchedFlow</processType>
     <recordDeletes>
-        <name>Delete_Back_Check_log</name>
-        <label>Delete Back Check log</label>
-        <locationX>511</locationX>
-        <locationY>55</locationY>
+        <name>Delete_Bag_Check_log</name>
+        <label>Delete Bag Check log</label>
+        <locationX>803</locationX>
+        <locationY>411</locationY>
         <inputReference>Get_Bag_Checkouts</inputReference>
     </recordDeletes>
     <recordLookups>
@@ -57,34 +144,52 @@
             <targetReference>dec_Record_Found</targetReference>
         </connector>
         <filters>
-            <field>Client__c</field>
+            <field>Checkin__c</field>
             <operator>EqualTo</operator>
             <value>
-                <elementReference>var_ClientID</elementReference>
-            </value>
-        </filters>
-        <filters>
-            <field>Date__c</field>
-            <operator>EqualTo</operator>
-            <value>
-                <elementReference>$Flow.CurrentDate</elementReference>
+                <elementReference>var_CheckinID</elementReference>
             </value>
         </filters>
         <object>Bag_Check_log__c</object>
         <queriedFields>Id</queriedFields>
         <queriedFields>Bag__c</queriedFields>
     </recordLookups>
+    <recordLookups>
+        <name>Get_Bag_Details</name>
+        <label>Get Bag Details</label>
+        <locationX>346</locationX>
+        <locationY>215</locationY>
+        <assignNullValuesIfNoRecordsFound>false</assignNullValuesIfNoRecordsFound>
+        <connector>
+            <targetReference>Used_once</targetReference>
+        </connector>
+        <filters>
+            <field>Id</field>
+            <operator>EqualTo</operator>
+            <value>
+                <elementReference>Get_Bag_Checkouts.Bag__c</elementReference>
+            </value>
+        </filters>
+        <object>Bag__c</object>
+        <queriedFields>Id</queriedFields>
+        <queriedFields>Last_used_by__c</queriedFields>
+        <queriedFields>Last_Used_Date__c</queriedFields>
+        <queriedFields>Uses_Count__c</queriedFields>
+    </recordLookups>
+    <recordUpdates>
+        <name>Update_Bag_details</name>
+        <label>Update Bag details</label>
+        <locationX>643</locationX>
+        <locationY>416</locationY>
+        <connector>
+            <targetReference>Delete_Bag_Check_log</targetReference>
+        </connector>
+        <inputReference>Get_Bag_Details</inputReference>
+    </recordUpdates>
     <startElementReference>Get_Bag_Checkouts</startElementReference>
     <status>Active</status>
     <variables>
         <name>var_CheckinID</name>
-        <dataType>String</dataType>
-        <isCollection>false</isCollection>
-        <isInput>true</isInput>
-        <isOutput>false</isOutput>
-    </variables>
-    <variables>
-        <name>var_ClientID</name>
         <dataType>String</dataType>
         <isCollection>false</isCollection>
         <isInput>true</isInput>
